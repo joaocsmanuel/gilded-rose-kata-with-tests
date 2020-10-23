@@ -7,17 +7,14 @@ describe("GildedRose shop manager", function () {
     
     it("decreases by 1 the quality and remaining sellIn days of regular items", function () {
         items.push(new Item("+5 Dexterity Vest", 10, 20));
-        items.push(new Item("Conjured Mana Cake", 3, 6));
         
         items = GildedRose.updateQuality(items);
     
         var expected = [
             {sellIn:9 , quality:19},
-            {sellIn:2 , quality:5 }
         ];
         expected.forEach(function (testCase, idx) {
             expect(items[idx].quality).toBe(testCase.quality);
-            expect(items[idx].sellIn).toBe(testCase.sellIn);
         });
     });
     
@@ -77,7 +74,7 @@ describe("GildedRose shop manager", function () {
         
         var expected = [
             {sellIn:-1, quality:18},
-            {sellIn:-1, quality:4 }
+            {sellIn:-1, quality:2 }
         ];
         expected.forEach(function (testCase, idx) {
             expect(items[idx].quality).toBe(testCase.quality);
@@ -117,5 +114,37 @@ describe("GildedRose shop manager", function () {
     
         expect(items[0].quality).toBe(50);
         expect(items[0].sellIn).toBe(3);
+    });
+    
+    it("decreases the quality of Conjured Mana Cake twice as fast than normal items", function () {
+        items.push(new Item("+5 Dexterity Vest", 2, 20));
+        items.push(new Item("Conjured Mana Cake", 2, 6));
+
+        items = GildedRose.updateQuality(items);
+        
+        var expected = [
+            {sellIn:1, quality:19},
+            {sellIn:1, quality:4 }
+        ];
+        expected.forEach(function (testCase, idx) {
+            expect(items[idx].quality).toBe(testCase.quality);
+            expect(items[idx].sellIn).toBe(testCase.sellIn);
+        });
+    });
+
+    it("decreases the quality of Conjured Mana Cake twice as fast than normal items, and twice as fast when we have passed the sellIn date", function () {
+        items.push(new Item("+5 Dexterity Vest", 0, 20));
+        items.push(new Item("Conjured Mana Cake", 0, 6));
+
+        items = GildedRose.updateQuality(items);
+        
+        var expected = [
+            {sellIn:-1, quality:18},
+            {sellIn:-1, quality:2 }
+        ];
+        expected.forEach(function (testCase, idx) {
+            expect(items[idx].quality).toBe(testCase.quality);
+            expect(items[idx].sellIn).toBe(testCase.sellIn);
+        });
     });
 });
