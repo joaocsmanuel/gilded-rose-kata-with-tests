@@ -15,9 +15,21 @@ var GildedRose = function () {
   GildedRose.updateQuality(items);
 };
 
+GildedRose.isLegendaryItem = function (name) {
+  return name === "Sulfuras, Hand of Ragnaros";
+};
+
+GildedRose.isNormalItem = function (name) {
+  return (
+    name !== "Aged Brie" && name !== "Backstage passes to a TAFKAL80ETC concert"
+  );
+};
+
 GildedRose.updateNormalItemQuality = function (item) {
-  if (item.quality > 0 && item.name !== "Sulfuras, Hand of Ragnaros") {
-    item.name === "Conjured Mana Cake" ? item.quality -= 2 : item.quality -= 1;
+  if (item.quality > 0 && !this.isLegendaryItem(item.name)) {
+    item.name === "Conjured Mana Cake"
+      ? (item.quality -= 2)
+      : (item.quality -= 1);
   }
 };
 
@@ -36,18 +48,17 @@ GildedRose.updateSpecialItemQuality = function (item) {
 };
 
 GildedRose.decreaseSellIn = function (item) {
-  if (item.name !== "Sulfuras, Hand of Ragnaros") item.sellIn -= 1;
+  if (!this.isLegendaryItem(item.name)) item.sellIn -= 1;
 };
 
 GildedRose.checkMaxQuality = function (item) {
-  if ("Sulfuras, Hand of Ragnaros" !== item.name && item.quality > 50)
+  if (!this.isLegendaryItem(item.name) && item.quality > 50)
     item.quality = 50;
 };
 
 GildedRose.checkSellInNegative = function (item) {
   if (item.sellIn < 0) {
-    item.name !== "Aged Brie" &&
-    item.name !== "Backstage passes to a TAFKAL80ETC concert"
+    this.isNormalItem(item.name)
       ? this.updateNormalItemQuality(item)
       : (item.quality = 0);
   }
@@ -55,8 +66,7 @@ GildedRose.checkSellInNegative = function (item) {
 
 GildedRose.updateQuality = function (items) {
   return items.map((item) => {
-    item.name !== "Aged Brie" &&
-    item.name !== "Backstage passes to a TAFKAL80ETC concert"
+    this.isNormalItem(item.name)
       ? this.updateNormalItemQuality(item)
       : this.updateSpecialItemQuality(item);
 
