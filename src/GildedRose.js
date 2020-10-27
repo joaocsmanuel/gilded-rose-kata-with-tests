@@ -15,25 +15,41 @@ var GildedRose = function () {
   GildedRose.updateQuality(items);
 };
 
-GildedRose.isLegendaryItem = function (name) {
+GildedRose.updateQuality = function (items) {
+  return items.map((item) => {
+    this._isNormalItem(item.name)
+      ? this._updateNormalItemQuality(item)
+      : this._updateSpecialItemQuality(item);
+
+    this._decreaseSellIn(item);
+
+    this._checkSellInNegative(item);
+
+    this._checkMaxQuality(item);
+
+    return item;
+  });
+};
+
+GildedRose._isLegendaryItem = function (name) {
   return name === "Sulfuras, Hand of Ragnaros";
 };
 
-GildedRose.isNormalItem = function (name) {
+GildedRose._isNormalItem = function (name) {
   return (
     name !== "Aged Brie" && name !== "Backstage passes to a TAFKAL80ETC concert"
   );
 };
 
-GildedRose.updateNormalItemQuality = function (item) {
-  if (item.quality > 0 && !this.isLegendaryItem(item.name)) {
+GildedRose._updateNormalItemQuality = function (item) {
+  if (item.quality > 0 && !this._isLegendaryItem(item.name)) {
     item.name === "Conjured Mana Cake"
       ? (item.quality -= 2)
       : (item.quality -= 1);
   }
 };
 
-GildedRose.updateSpecialItemQuality = function (item) {
+GildedRose._updateSpecialItemQuality = function (item) {
   if (item.quality < 50) {
     item.quality += 1;
 
@@ -47,35 +63,19 @@ GildedRose.updateSpecialItemQuality = function (item) {
   }
 };
 
-GildedRose.decreaseSellIn = function (item) {
-  if (!this.isLegendaryItem(item.name)) item.sellIn -= 1;
+GildedRose._decreaseSellIn = function (item) {
+  if (!this._isLegendaryItem(item.name)) item.sellIn -= 1;
 };
 
-GildedRose.checkMaxQuality = function (item) {
-  if (!this.isLegendaryItem(item.name) && item.quality > 50)
+GildedRose._checkMaxQuality = function (item) {
+  if (!this._isLegendaryItem(item.name) && item.quality > 50)
     item.quality = 50;
 };
 
-GildedRose.checkSellInNegative = function (item) {
+GildedRose._checkSellInNegative = function (item) {
   if (item.sellIn < 0) {
-    this.isNormalItem(item.name)
-      ? this.updateNormalItemQuality(item)
+    this._isNormalItem(item.name)
+      ? this._updateNormalItemQuality(item)
       : (item.quality = 0);
   }
-};
-
-GildedRose.updateQuality = function (items) {
-  return items.map((item) => {
-    this.isNormalItem(item.name)
-      ? this.updateNormalItemQuality(item)
-      : this.updateSpecialItemQuality(item);
-
-    this.decreaseSellIn(item);
-
-    this.checkSellInNegative(item);
-
-    this.checkMaxQuality(item);
-
-    return item;
-  });
 };
