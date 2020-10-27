@@ -17,11 +17,7 @@ var GildedRose = function () {
 
 GildedRose.updateNormalItemQuality = function (item) {
   if (item.quality > 0 && item.name !== "Sulfuras, Hand of Ragnaros") {
-    if (item.name === "Conjured Mana Cake") {
-      item.quality -= 2;
-    } else {
-      item.quality -= 1;
-    }
+    item.name === "Conjured Mana Cake" ? item.quality -= 2 : item.quality -= 1;
   }
 };
 
@@ -32,6 +28,7 @@ GildedRose.updateSpecialItemQuality = function (item) {
     if (item.sellIn < 11) {
       item.quality += 1;
     }
+
     if (item.sellIn < 6) {
       item.quality += 1;
     }
@@ -47,10 +44,16 @@ GildedRose.checkMaxQuality = function (item) {
     item.quality = 50;
 };
 
-
+GildedRose.checkSellInNegative = function (item) {
+  if (item.sellIn < 0) {
+    item.name !== "Aged Brie" &&
+    item.name !== "Backstage passes to a TAFKAL80ETC concert"
+      ? this.updateNormalItemQuality(item)
+      : (item.quality = 0);
+  }
+};
 
 GildedRose.updateQuality = function (items) {
-  console.log(items);
   return items.map((item) => {
     item.name !== "Aged Brie" &&
     item.name !== "Backstage passes to a TAFKAL80ETC concert"
@@ -59,12 +62,7 @@ GildedRose.updateQuality = function (items) {
 
     this.decreaseSellIn(item);
 
-    if (item.sellIn < 0) {
-      item.name !== "Aged Brie" &&
-      item.name !== "Backstage passes to a TAFKAL80ETC concert"
-        ? this.updateNormalItemQuality(item)
-        : (item.quality = 0);
-    }
+    this.checkSellInNegative(item);
 
     this.checkMaxQuality(item);
 
